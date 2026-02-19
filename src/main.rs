@@ -78,3 +78,35 @@ fn run(mut input: impl BufRead) -> IoResult<()> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Cursor;
+
+    #[test]
+    fn run_empty_input_returns_ok() {
+        run(Cursor::new(b"" as &[u8])).unwrap();
+    }
+
+    #[test]
+    fn run_passthrough_line_returns_ok() {
+        run(Cursor::new(b"some line\n" as &[u8])).unwrap();
+    }
+
+    #[test]
+    fn run_550_line_returns_ok() {
+        run(Cursor::new(
+            b"filter-result|abc|tok|reject|550 reason\n" as &[u8],
+        ))
+        .unwrap();
+    }
+
+    #[test]
+    fn run_421_line_returns_ok() {
+        run(Cursor::new(
+            b"filter-result|abc|tok|reject|421 reason\n" as &[u8],
+        ))
+        .unwrap();
+    }
+}
